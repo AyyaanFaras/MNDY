@@ -1,6 +1,7 @@
 package com.devs.mndy.views.screens.otp
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,9 +12,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.requestFocus
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -25,26 +30,39 @@ fun OtpRow(
     otpLength: Int,
     onOtpChange: (String) -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        repeat(otpLength) { index ->
-            OtpBox(
-                value = otp.getOrNull(index)?.toString() ?: "",
-                isFocused = otp.length == index
-            )
-        }
-    }
+    val focusRequester = remember { FocusRequester() }
 
-    // Hidden text field for keyboard input
-    BasicTextField(
-        value = otp,
-        onValueChange = onOtpChange,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.NumberPassword
-        ),
-        modifier = Modifier.size(0.dp)
-    )
+    Box(contentAlignment = Alignment.Center) {
+        // Visible Boxes
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.clickable(
+                interactionSource = null,
+                indication = null
+            ) { focusRequester.requestFocus() }
+        ) {
+            repeat(otpLength) { index ->
+                OtpBox(
+                    value = otp.getOrNull(index)?.toString() ?: "",
+                    isFocused = otp.length == index
+                )
+            }
+        }
+
+        // Hidden text field for keyboard input
+        BasicTextField(
+            value = otp,
+            onValueChange = {
+                if (it.length <= otpLength) onOtpChange(it)
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.NumberPassword
+            ),
+            modifier = Modifier
+                .size(1.dp) // Minimum size but must be visible for focus
+                .focusRequester(focusRequester)
+        )
+    }
 }
 
 @Composable

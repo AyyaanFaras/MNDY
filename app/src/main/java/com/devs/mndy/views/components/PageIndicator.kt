@@ -30,10 +30,7 @@ fun PageIndicator(
                     .size(8.dp)
                     .clip(CircleShape)
                     .background(
-                        if (index == selectedIndex)
-                            GreenPrimary
-                        else
-                            mndyTheme.colors.onBackground.copy(alpha = 0.4f)
+                        mndyTheme.colors.onBackground.copy(alpha = 0.4f)
                     )
             )
         }

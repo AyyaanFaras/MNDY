@@ -1,5 +1,6 @@
 package com.devs.mndy.views.screens.otp
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,15 +34,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devs.mndy.R
 import com.devs.mndy.utils.colors.mndyTheme
+import com.devs.mndy.views.components.PrimaryButton
 
 @Composable
 fun VerifyOtpScreen(
     phoneNumber: String,
     otpLength: Int = 6,
-    resendTime: Int = 19,
+    resendTime: Int = 30,
+    isError: Boolean = false,
+    onVerifyChange: (String) -> Unit = {}, // To clear error state while typing
     onVerifyClick: (String) -> Unit = {}
 ) {
     var otp by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        Toast.makeText(context, "Test OTP is 123456", Toast.LENGTH_LONG).show()
+    }
 
     Column(
         modifier = Modifier
@@ -89,8 +101,20 @@ fun VerifyOtpScreen(
         OtpRow(
             otp = otp,
             otpLength = otpLength,
-            onOtpChange = { if (it.length <= otpLength) otp = it }
+            onOtpChange = {
+                otp = it
+                onVerifyChange(it) // Callback to clear error in parent
+            }
         )
+
+        if (isError) {
+            Text(
+                text = "Incorrect OTP",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
 
         Spacer(Modifier.height(24.dp))
 
@@ -102,17 +126,11 @@ fun VerifyOtpScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Bottom Button
-        Button(
-            onClick = { onVerifyClick(otp) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(28.dp),
-            enabled = otp.length == otpLength
-        ) {
-            Text("Verify & Login")
-        }
+        PrimaryButton(
+            text = "Verify & Login",
+            enabled = otp.length == otpLength,
+            onClick = { onVerifyClick(otp) }
+        )
 
         Spacer(Modifier.height(24.dp))
     }

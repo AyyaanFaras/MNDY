@@ -5,15 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.devs.mndy.utils.colors.MndyTheme
-import com.devs.mndy.views.screens.SplashScreen
+import com.devs.mndy.views.screens.AppNavigation
 
-
-class MainActivity : ComponentActivity() {
+class MNDY : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MndyTheme(darkTheme = isSystemInDarkTheme()) {
-                SplashScreen()
+                AppNavigation()
             }
         }
     }

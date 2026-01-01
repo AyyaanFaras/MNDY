@@ -54,4 +54,10 @@ dependencies {
 
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
+    implementation("androidx.compose.material:material-icons-extended")
+    // Gson for object serialization in DataStore (optional but helpful)
+    implementation("com.google.code.gson:gson:2.10.1")
 }
